@@ -1,0 +1,4 @@
+covorage
+dist
+.env
+node_modules
