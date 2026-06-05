@@ -4,6 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const redis = createClient({
-    url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-    // url: "redis://localhost:6379",
-})
+  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+  // url: "redis://localhost:6379",
+});

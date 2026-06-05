@@ -1,5 +1,14 @@
 # Node modules
 **/node_modules
+node_modules/
+
+
+
+frontend/covorage
+backend/covorage
+worker/covorage
+
+
 
 # Build folders
 frontend/dist
@@ -8,9 +17,13 @@ worker/dist
 
 # Environment files
 .env
+.env.*
 frontend/.env
 backend/.env
 worker/.env
 
 # Logs
 *.log
+
+.DS_Store
+Thumbs.db

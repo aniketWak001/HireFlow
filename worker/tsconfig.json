@@ -42,5 +42,10 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "esModuleInterop": true,
-  }
+  },
+    "exclude": [
+    "tests",
+    "dist",
+    "node_modules"
+  ]
 }
