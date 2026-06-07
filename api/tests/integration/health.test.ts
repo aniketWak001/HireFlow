@@ -3,7 +3,7 @@ import app from "../../src/app.js";
 
 describe("Health Check", () => {
   it("Should return status ok", async () => {
-    const res = await request(app).get("/health");
+    const res = await request(app).get("/api/health");
 
     expect(res.status).toBe(200);
 
