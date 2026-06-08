@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+const { JsonWebTokenError, TokenExpiredError } = jwt;
+import logger from "../utils/logger.js";
 
 export class AppError extends Error {
   constructor(
@@ -41,7 +43,7 @@ export function errorHandler(
     return;
   }
 
-  console.error("Unexpected error:", err);
+  logger.error({ err }, "Unexpected error");
   res.status(500).json({
     success: false,
     message: "Internal server error",
