@@ -4,6 +4,9 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: true,
+    env: {
+      NODE_ENV: "test",
+    },
     coverage: {
       exclude: [
         "node_modules/**",
