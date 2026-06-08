@@ -1,7 +1,11 @@
 import "dotenv/config";
 import prisma from "../db/prisma.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/token.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} from "../utils/token.js";
 import { AppError } from "../middleware/errorHandler.js";
 
 export interface RegisterInput {

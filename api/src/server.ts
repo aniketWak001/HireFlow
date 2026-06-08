@@ -5,7 +5,6 @@ import app from "./app.js";
 import prisma from "./db/prisma.js";
 import { redis } from "./config/redis.js";
 
-
 async function start() {
   try {
     await prisma.$queryRaw`SELECT 1`;

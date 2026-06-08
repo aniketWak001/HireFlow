@@ -4,7 +4,7 @@ import * as authService from "../services/auth.service.js";
 export async function register(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const user = await authService.registerUser(req.body);
@@ -17,7 +17,7 @@ export async function register(
 export async function login(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const result = await authService.loginUser(req.body);
@@ -30,7 +30,7 @@ export async function login(
 export async function refresh(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const { refreshToken } = req.body as { refreshToken: string };
@@ -44,7 +44,7 @@ export async function refresh(
 export async function logout(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const { refreshToken } = req.body as { refreshToken: string };
