@@ -1,7 +1,8 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 import { errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/auth.routes.js";
-import rateLimit from "express-rate-limit";
+import jobRoutes from "./routes/job.routes.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/jobs", jobRoutes);
 
 app.use(errorHandler);
 
