@@ -89,9 +89,7 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-// ─────────────────────────────────────────
 // SUBMIT APPLICATION
-// ─────────────────────────────────────────
 
 describe("POST /api/v1/jobs/:id/apply", () => {
   it("should submit application as candidate", async () => {
@@ -144,9 +142,7 @@ describe("POST /api/v1/jobs/:id/apply", () => {
   });
 });
 
-// ─────────────────────────────────────────
 // CANDIDATE DASHBOARD
-// ─────────────────────────────────────────
 
 describe("GET /api/v1/applications", () => {
   it("should return candidate own applications", async () => {
@@ -175,9 +171,7 @@ describe("GET /api/v1/applications", () => {
   });
 });
 
-// ─────────────────────────────────────────
 // RECRUITER DASHBOARD
-// ─────────────────────────────────────────
 
 describe("GET /api/v1/jobs/:id/applications", () => {
   it("should return applicants for recruiter job", async () => {
@@ -206,9 +200,7 @@ describe("GET /api/v1/jobs/:id/applications", () => {
   });
 });
 
-// ─────────────────────────────────────────
 // UPDATE APPLICATION STATUS
-// ─────────────────────────────────────────
 
 describe("PATCH /api/v1/applications/:id/status", () => {
   it("should update application status as recruiter", async () => {
