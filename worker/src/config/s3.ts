@@ -1,4 +1,4 @@
- import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
 export const s3Client = new S3Client({
   region: process.env.AWS_REGION!,

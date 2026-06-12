@@ -21,7 +21,7 @@ async function processEmail(job: Job<EmailJobData>) {
 
   let subject = "";
   let html = "";
-  let to = payload["email"] ?? process.env.EMAIL_FROM!;
+  const to = payload["email"] ?? process.env.EMAIL_FROM!;
 
   if (type === "application_received") {
     subject = `Application Received — ${payload["jobTitle"] ?? "Position"}`;
@@ -60,7 +60,7 @@ export const emailWorker = new Worker<EmailJobData>(
   {
     connection,
     concurrency: 10,
-  }
+  },
 );
 
 emailWorker.on("completed", (job) => {

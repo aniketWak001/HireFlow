@@ -74,7 +74,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-          
+
+      - name: Install Root Dependencies
+        working-directory: .
+        run: npm install
+
       - name: Generate Prisma Client
         working-directory: .
         run: npx prisma generate
@@ -99,7 +103,7 @@ jobs:
 
       - name: Docker Build
         run: docker build -t hireflow-api .
-
+        
   worker:
 
     name: Worker Checks

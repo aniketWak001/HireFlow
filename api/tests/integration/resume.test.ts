@@ -2,8 +2,6 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import supertest from "supertest";
 import app from "../../src/app.js";
 import prisma from "../../src/db/prisma.js";
-import path from "path";
-import fs from "fs";
 
 const request = supertest(app);
 
@@ -27,7 +25,7 @@ let resumeId: string;
 
 // create a minimal test PDF buffer
 const testPdfBuffer = Buffer.from(
-  "%PDF-1.4 test resume content John Doe john@example.com Node.js TypeScript"
+  "%PDF-1.4 test resume content John Doe john@example.com Node.js TypeScript",
 );
 
 beforeAll(async () => {

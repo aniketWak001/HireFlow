@@ -4,7 +4,9 @@ import prisma from "../config/prisma.js";
 import { downloadFromS3 } from "../config/s3.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const pdf = require("pdf-parse") as (buffer: Buffer) => Promise<{ text: string }>;
+const pdf = require("pdf-parse") as (
+  buffer: Buffer,
+) => Promise<{ text: string }>;
 const connection = {
   host: process.env.REDIS_HOST ?? "localhost",
   port: Number(process.env.REDIS_PORT ?? 6379),
@@ -37,7 +39,7 @@ async function processResume(job: Job<ResumeJobData>) {
 
     // extract basic info using regex
     const emailMatch = text.match(
-      /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/
+      /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
     );
     const parsedEmail = emailMatch?.[0] ?? null;
 
@@ -50,12 +52,27 @@ async function processResume(job: Job<ResumeJobData>) {
 
     // extract skills — look for common keywords
     const skillKeywords = [
-      "JavaScript", "TypeScript", "Node.js", "React", "Express",
-      "PostgreSQL", "MongoDB", "Redis", "Docker", "AWS", "Python",
-      "Java", "CSS", "HTML", "Git", "REST", "GraphQL", "Next.js",
+      "JavaScript",
+      "TypeScript",
+      "Node.js",
+      "React",
+      "Express",
+      "PostgreSQL",
+      "MongoDB",
+      "Redis",
+      "Docker",
+      "AWS",
+      "Python",
+      "Java",
+      "CSS",
+      "HTML",
+      "Git",
+      "REST",
+      "GraphQL",
+      "Next.js",
     ];
     const parsedSkills = skillKeywords.filter((skill) =>
-      text.toLowerCase().includes(skill.toLowerCase())
+      text.toLowerCase().includes(skill.toLowerCase()),
     );
 
     // update resume with parsed data
@@ -86,7 +103,7 @@ export const resumeWorker = new Worker<ResumeJobData>(
   {
     connection,
     concurrency: 5,
-  }
+  },
 );
 
 resumeWorker.on("completed", (job) => {
