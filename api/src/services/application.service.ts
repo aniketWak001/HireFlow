@@ -1,5 +1,6 @@
 import prisma from "../db/prisma.js";
 import { AppError } from "../middleware/errorHandler.js";
+import { queueEmailNotification } from "./resume.service.js";
 
 export interface SubmitApplicationInput {
   coverLetter?: string | undefined;
@@ -48,6 +49,12 @@ export async function submitApplication(
         select: { id: true, title: true, location: true },
       },
     },
+  });
+
+  await queueEmailNotification("application_received", {
+    candidateId,
+    jobId,
+    jobTitle: job.title,
   });
 
   return application;
@@ -120,6 +127,11 @@ export async function updateApplicationStatus(
       "You are not authorized to update this application",
     );
   }
+
+  await queueEmailNotification("status_change", {
+    applicationId,
+    status: input.status,
+  });
 
   return prisma.application.update({
     where: { id: applicationId },
