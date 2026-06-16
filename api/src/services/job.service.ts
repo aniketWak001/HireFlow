@@ -139,7 +139,7 @@ export async function getJobById(id: string) {
 export async function updateJob(
   id: string,
   recruiterId: string,
-  input: UpdateJobInput
+  input: UpdateJobInput,
 ) {
   const job = await prisma.job.findUnique({ where: { id } });
 

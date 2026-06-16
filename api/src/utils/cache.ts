@@ -10,7 +10,7 @@ export async function getCache<T>(key: string): Promise<T | null> {
     if (!data) return null;
     return JSON.parse(data) as T;
   } catch (error) {
-     if (!isTest) logger.error({ error }, "Cache get error");
+    if (!isTest) logger.error({ error }, "Cache get error");
     return null;
   }
 }
@@ -18,12 +18,12 @@ export async function getCache<T>(key: string): Promise<T | null> {
 export async function setCache(
   key: string,
   value: unknown,
-  ttl: number = DEFAULT_TTL
+  ttl: number = DEFAULT_TTL,
 ): Promise<void> {
   try {
     await redis.set(key, JSON.stringify(value), { EX: ttl });
   } catch (error) {
-     if (!isTest) logger.error({ error }, "Cache set error");
+    if (!isTest) logger.error({ error }, "Cache set error");
   }
 }
 
@@ -31,7 +31,7 @@ export async function deleteCache(key: string): Promise<void> {
   try {
     await redis.del(key);
   } catch (error) {
-     if (!isTest) logger.error({ error }, "Cache delete error");
+    if (!isTest) logger.error({ error }, "Cache delete error");
   }
 }
 
@@ -42,7 +42,7 @@ export async function deleteCacheByPattern(pattern: string): Promise<void> {
       await redis.del(keys);
     }
   } catch (error) {
-     if (!isTest) logger.error({ error }, "Cache delete by pattern error");
+    if (!isTest) logger.error({ error }, "Cache delete by pattern error");
   }
 }
 
