@@ -4,5 +4,3 @@ node_modules
 .env.test
 covorage
 dist
-
-/generated/prisma

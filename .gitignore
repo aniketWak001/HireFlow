@@ -1,28 +1,21 @@
-# Node modules
 **/node_modules
 node_modules/
 
+frontend/coverage
+api/coverage
+worker/coverage
+coverage
 
-
-frontend/covorage
-api/covorage
-worker/covorage
-covorage
-
-
-# Build folders
 frontend/dist
 api/dist
 worker/dist
 
-# Environment files
 .env
 .env.*
 frontend/.env
 api/.env
 worker/.env
 
-# Logs
 *.log
 
 .DS_Store

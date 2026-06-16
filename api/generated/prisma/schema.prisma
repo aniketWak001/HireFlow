@@ -1,0 +1,168 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────────────────────
+// ENUMS
+// ───────────────────────────────────────────
+
+enum Role {
+  candidate
+  recruiter
+  admin
+}
+
+enum JobType {
+  full_time
+  part_time
+  remote
+  contract
+}
+
+enum JobStatus {
+  open
+  closed
+  draft
+}
+
+enum ApplicationStatus {
+  applied
+  reviewed
+  interview
+  hired
+  rejected
+}
+
+enum ParseStatus {
+  pending
+  processing
+  done
+  failed
+}
+
+enum NotificationType {
+  application_received
+  status_change
+  interview_invite
+}
+
+// ───────────────────────────────────────────
+// MODELS
+// ───────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @db.VarChar(255)
+  role         Role
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  jobs          Job[]
+  applications  Application[]
+  resumes       Resume[]
+  refreshTokens RefreshToken[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique @db.Text
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model Job {
+  id             String    @id @default(uuid())
+  recruiterId    String
+  title          String    @db.VarChar(200)
+  description    String    @db.Text
+  location       String?   @db.VarChar(200)
+  jobType        JobType
+  salaryMin      Int?
+  salaryMax      Int?
+  skillsRequired String[]
+  status         JobStatus @default(open)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  recruiter    User          @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@index([status])
+  @@index([recruiterId])
+  @@index([createdAt(sort: Desc)])
+  @@map("jobs")
+}
+
+model Application {
+  id          String            @id @default(uuid())
+  candidateId String
+  jobId       String
+  resumeUrl   String?           @db.Text
+  status      ApplicationStatus @default(applied)
+  coverLetter String?           @db.Text
+  atsScore    Int?
+  appliedAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  candidate User @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  job       Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, jobId])
+  @@index([candidateId])
+  @@index([jobId])
+  @@index([status])
+  @@map("applications")
+}
+
+model Resume {
+  id           String      @id @default(uuid())
+  candidateId  String
+  s3Key        String      @db.Text
+  fileName     String?
+  parsedName   String?     @db.VarChar(100)
+  parsedEmail  String?     @db.VarChar(255)
+  parsedSkills String[]
+  rawText      String?     @db.Text
+  parseStatus  ParseStatus @default(pending)
+  uploadedAt   DateTime    @default(now())
+
+  candidate User @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@index([candidateId])
+  @@index([parseStatus])
+  @@map("resumes")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  payload   Json
+  sent      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
