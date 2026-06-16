@@ -1,24 +1,31 @@
 import prisma from "../db/prisma.js";
 import { AppError } from "../middleware/errorHandler.js";
+import {
+  getCache,
+  setCache,
+  deleteCache,
+  deleteCacheByPattern,
+  CacheKeys,
+} from "../utils/cache.js";
 
 export interface CreateJobInput {
   title: string;
   description: string;
-  location?: string;
+  location?: string | undefined;
   jobType: "full_time" | "part_time" | "remote" | "contract";
-  salaryMin?: number;
-  salaryMax?: number;
-  skillsRequired?: string[];
+  salaryMin?: number | undefined;
+  salaryMax?: number | undefined;
+  skillsRequired?: string[] | undefined;
 }
 
 export interface UpdateJobInput {
-  title?: string;
-  description?: string;
-  location?: string;
-  jobType?: "full_time" | "part_time" | "remote" | "contract";
-  salaryMin?: number;
-  salaryMax?: number;
-  skillsRequired?: string[];
+  title?: string | undefined;
+  description?: string | undefined;
+  location?: string | undefined;
+  jobType?: "full_time" | "part_time" | "remote" | "contract" | undefined;
+  salaryMin?: number | undefined;
+  salaryMax?: number | undefined;
+  skillsRequired?: string[] | undefined;
 }
 
 export interface JobListQuery {
@@ -44,10 +51,17 @@ export async function createJob(recruiterId: string, input: CreateJobInput) {
     },
   });
 
+  // invalidate job list cache
+  await deleteCacheByPattern("jobs:list:*");
+
   return job;
 }
 
 export async function getJobs(query: JobListQuery) {
+  const cacheKey = CacheKeys.jobList(JSON.stringify(query));
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
+
   const limit = query.limit ?? 10;
 
   const jobs = await prisma.job.findMany({
@@ -90,10 +104,19 @@ export async function getJobs(query: JobListQuery) {
   const data = hasNextPage ? jobs.slice(0, -1) : jobs;
   const nextCursor = hasNextPage ? data[data.length - 1]?.id : null;
 
-  return { data, nextCursor, hasNextPage };
+  const result = { data, nextCursor, hasNextPage };
+
+  // cache for 5 minutes
+  await setCache(cacheKey, result, 300);
+
+  return result;
 }
 
 export async function getJobById(id: string) {
+  const cacheKey = CacheKeys.jobById(id);
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
+
   const job = await prisma.job.findUnique({
     where: { id },
     include: {
@@ -107,13 +130,16 @@ export async function getJobById(id: string) {
     throw new AppError(404, "Job not found");
   }
 
+  // cache for 10 minutes
+  await setCache(cacheKey, job, 600);
+
   return job;
 }
 
 export async function updateJob(
   id: string,
   recruiterId: string,
-  input: UpdateJobInput,
+  input: UpdateJobInput
 ) {
   const job = await prisma.job.findUnique({ where: { id } });
 
@@ -125,7 +151,7 @@ export async function updateJob(
     throw new AppError(403, "You are not authorized to update this job");
   }
 
-  return prisma.job.update({
+  const updated = await prisma.job.update({
     where: { id },
     data: {
       ...(input.title !== undefined && { title: input.title }),
@@ -141,6 +167,12 @@ export async function updateJob(
       }),
     },
   });
+
+  // invalidate caches
+  await deleteCache(CacheKeys.jobById(id));
+  await deleteCacheByPattern("jobs:list:*");
+
+  return updated;
 }
 
 export async function deleteJob(id: string, recruiterId: string) {
@@ -155,6 +187,10 @@ export async function deleteJob(id: string, recruiterId: string) {
   }
 
   await prisma.job.delete({ where: { id } });
+
+  // invalidate caches
+  await deleteCache(CacheKeys.jobById(id));
+  await deleteCacheByPattern("jobs:list:*");
 }
 
 export async function closeJob(id: string, recruiterId: string) {
@@ -172,8 +208,14 @@ export async function closeJob(id: string, recruiterId: string) {
     throw new AppError(400, "Job is already closed");
   }
 
-  return prisma.job.update({
+  const updated = await prisma.job.update({
     where: { id },
     data: { status: "closed" },
   });
+
+  // invalidate caches
+  await deleteCache(CacheKeys.jobById(id));
+  await deleteCacheByPattern("jobs:list:*");
+
+  return updated;
 }

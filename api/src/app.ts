@@ -1,4 +1,6 @@
 import express from "express";
+import helmet from "helmet";
+import compression from "compression";
 import rateLimit from "express-rate-limit";
 import { errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -8,6 +10,10 @@ import adminRoutes from "./routes/admin.routes.js";
 import resumeRoutes from "./routes/resume.routes.js";
 
 const app = express();
+
+app.use(helmet());
+
+app.use(compression());
 
 app.use(express.json());
 

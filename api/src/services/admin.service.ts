@@ -1,6 +1,11 @@
 import prisma from "../db/prisma.js";
+import { getCache, setCache, CacheKeys } from "../utils/cache.js";
 
 export async function getAnalytics() {
+  const cacheKey = CacheKeys.analytics();
+  const cached = await getCache(cacheKey);
+  if (cached) return cached;
+
   const [
     totalUsers,
     totalJobs,
@@ -23,7 +28,7 @@ export async function getAnalytics() {
     }),
   ]);
 
-  return {
+  const result = {
     users: {
       total: totalUsers,
       byRole: usersByRole.map((r) => ({
@@ -43,4 +48,9 @@ export async function getAnalytics() {
       })),
     },
   };
+
+  // cache analytics for 2 minutes
+  await setCache(cacheKey, result, 120);
+
+  return result;
 }
