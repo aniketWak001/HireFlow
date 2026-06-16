@@ -1,7 +1,22 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { mockClient } from "aws-sdk-client-mock";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import supertest from "supertest";
 import app from "../../src/app.js";
 import prisma from "../../src/db/prisma.js";
+
+// mock S3 client
+const s3Mock = mockClient(S3Client);
+
+// mock getSignedUrl
+vi.mock("@aws-sdk/s3-request-presigner", () => ({
+  getSignedUrl: vi.fn().mockResolvedValue("https://mock-s3-url.com/resume.pdf"),
+}));
 
 const request = supertest(app);
 
@@ -23,12 +38,17 @@ let candidateToken: string;
 let recruiterToken: string;
 let resumeId: string;
 
-// create a minimal test PDF buffer
 const testPdfBuffer = Buffer.from(
   "%PDF-1.4 test resume content John Doe john@example.com Node.js TypeScript",
 );
 
 beforeAll(async () => {
+  // set up S3 mock
+  s3Mock.reset();
+  s3Mock.on(PutObjectCommand).resolves({});
+  s3Mock.on(DeleteObjectCommand).resolves({});
+  s3Mock.on(GetObjectCommand).resolves({});
+
   await prisma.resume.deleteMany({
     where: { candidate: { email: candidate.email } },
   });
