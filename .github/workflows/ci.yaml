@@ -56,6 +56,13 @@ jobs:
       PORT: 5000
       REDIS_HOST: localhost
       REDIS_PORT: 6379
+      NODE_ENV: test
+      AWS_ACCESS_KEY_ID: test_key
+      AWS_SECRET_ACCESS_KEY: test_secret
+      AWS_REGION: ap-southeast-2
+      AWS_S3_BUCKET_NAME: test-bucket
+      RESEND_API_KEY: test_resend_key
+      EMAIL_FROM: test@example.com
 
     defaults:
       run:
@@ -102,7 +109,8 @@ jobs:
         run: npm run build
 
       - name: Docker Build
-        run: docker build -t hireflow-api .
+        working-directory: .
+        run: docker build -t hireflow-api -f api/Dockerfile .
         
   worker:
 
@@ -139,6 +147,23 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hireflow
+      ACCESS_TOKEN_SECRET: test_access_secret
+      REFRESH_TOKEN_SECRET: test_refresh_secret
+      ACCESS_TOKEN_EXPIRES_IN: 15m
+      REFRESH_TOKEN_EXPIRES_IN: 7d
+      PORT: 5000
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      NODE_ENV: test
+      AWS_ACCESS_KEY_ID: test_key
+      AWS_SECRET_ACCESS_KEY: test_secret
+      AWS_REGION: ap-southeast-2
+      AWS_S3_BUCKET_NAME: test-bucket
+      RESEND_API_KEY: test_resend_key
+      EMAIL_FROM: test@example.com
 
     defaults:
       run:
@@ -158,6 +183,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Install Root Dependencies
+        working-directory: .
+        run: npm install
+
+      - name: Generate Prisma Client
+        working-directory: .
+        run: npx prisma generate
+
       - name: ESLint
         run: npm run lint
 
@@ -174,7 +207,8 @@ jobs:
         run: npm run build
 
       - name: Docker Build
-        run: docker build -t hireflow-worker .
+        working-directory: .
+        run: docker build -t hireflow-worker -f worker/Dockerfile .
 
   frontend:
 

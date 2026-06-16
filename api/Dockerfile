@@ -6,9 +6,11 @@ COPY package*.json ./
 
 RUN npm ci
 
-COPY . .
+COPY src ./src
+COPY tsconfig.json ./
+COPY prisma.config.ts ./
 
-RUN npx prisma generate
+COPY generated ./generated
 
 RUN npm run build
 
@@ -21,9 +23,8 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/generated ./generated
 
 EXPOSE 5000
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/server.js"]
