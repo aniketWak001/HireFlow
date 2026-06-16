@@ -84,7 +84,7 @@ jobs:
 
       - name: Install Root Dependencies
         working-directory: .
-        run: npm install
+        run: npm ci
 
       - name: Generate Prisma Client
         working-directory: .

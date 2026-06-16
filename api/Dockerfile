@@ -2,14 +2,12 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY api/package*.json ./
 
 RUN npm ci
 
-COPY src ./src
-COPY tsconfig.json ./
-COPY prisma.config.ts ./
-
+COPY api/src ./src
+COPY api/tsconfig.json ./
 COPY generated ./generated
 
 RUN npm run build
@@ -18,7 +16,7 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY api/package*.json ./
 
 RUN npm ci --omit=dev
 
