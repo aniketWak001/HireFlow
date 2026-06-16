@@ -7,8 +7,24 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "prepare": "husky"
   },
+  "lint-staged": {
+    "api/src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "api/tests/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "worker/src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aniketWak001/HireFlow.git"
@@ -25,6 +41,8 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "dotenv": "^17.4.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prisma": "^7.8.0"
   },
   "dependencies": {
