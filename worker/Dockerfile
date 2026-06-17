@@ -8,8 +8,6 @@ RUN npm ci
 
 COPY worker/src ./src
 COPY worker/tsconfig.json ./
-
-# mirror local structure: /app/generated mirrors hireflow/generated
 COPY generated /app/generated
 
 RUN npm run build
@@ -24,5 +22,9 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /app/worker/dist ./dist
 COPY --from=builder /app/generated /app/generated
+
+# copy Prisma runtime dependencies from builder
+COPY --from=builder /app/worker/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/worker/node_modules/@prisma/client-runtime-utils ./node_modules/@prisma/client-runtime-utils
 
 CMD ["node", "dist/server.js"]
