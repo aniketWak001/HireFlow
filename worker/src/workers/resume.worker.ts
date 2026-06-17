@@ -3,14 +3,33 @@ import { Worker, type Job } from "bullmq";
 import prisma from "../config/prisma.js";
 import { downloadFromS3 } from "../config/s3.js";
 import { createRequire } from "module";
+import { URL } from "url";
+
 const require = createRequire(import.meta.url);
 const pdf = require("pdf-parse") as (
   buffer: Buffer,
 ) => Promise<{ text: string }>;
-const connection = {
-  host: process.env.REDIS_HOST ?? "localhost",
-  port: Number(process.env.REDIS_PORT ?? 6379),
-};
+
+function getRedisConnection() {
+  const redisUrl = process.env.REDIS_URL;
+
+  if (redisUrl) {
+    const parsed = new URL(redisUrl);
+    return {
+      host: parsed.hostname,
+      port: Number(parsed.port) || 6379,
+      password: parsed.password || undefined,
+      tls: redisUrl.startsWith("rediss://") ? {} : undefined,
+    };
+  }
+
+  return {
+    host: process.env.REDIS_HOST ?? "localhost",
+    port: Number(process.env.REDIS_PORT ?? 6379),
+  };
+}
+
+const connection = getRedisConnection();
 
 interface ResumeJobData {
   resumeId: string;

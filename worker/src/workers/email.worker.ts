@@ -1,11 +1,28 @@
 import "dotenv/config";
 import { Worker, type Job } from "bullmq";
 import { Resend } from "resend";
+import { URL } from "url";
 
-const connection = {
-  host: process.env.REDIS_HOST ?? "localhost",
-  port: Number(process.env.REDIS_PORT ?? 6379),
-};
+function getRedisConnection() {
+  const redisUrl = process.env.REDIS_URL;
+
+  if (redisUrl) {
+    const parsed = new URL(redisUrl);
+    return {
+      host: parsed.hostname,
+      port: Number(parsed.port) || 6379,
+      password: parsed.password || undefined,
+      tls: redisUrl.startsWith("rediss://") ? {} : undefined,
+    };
+  }
+
+  return {
+    host: process.env.REDIS_HOST ?? "localhost",
+    port: Number(process.env.REDIS_PORT ?? 6379),
+  };
+}
+
+const connection = getRedisConnection();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
