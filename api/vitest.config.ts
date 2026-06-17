@@ -7,6 +7,8 @@ export default defineConfig({
     env: {
       NODE_ENV: "test",
     },
+    include: ["tests/**/*.test.ts"],
+    exclude: ["**/node_modules/**", "**/dist/**"],
     coverage: {
       exclude: [
         "node_modules/**",
