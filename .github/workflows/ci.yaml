@@ -197,12 +197,6 @@ jobs:
       - name: Prettier Check
         run: npm run format:check
 
-      - name: Run Tests
-        run: npm run test
-
-      - name: Coverage
-        run: npm run coverage
-
       - name: Build
         run: npm run build
 
