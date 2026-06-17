@@ -23,8 +23,8 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/worker/dist ./dist
 COPY --from=builder /app/generated /app/generated
 
-# copy Prisma runtime dependencies from builder
-COPY --from=builder /app/worker/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/worker/node_modules/@prisma/client-runtime-utils ./node_modules/@prisma/client-runtime-utils
+# copy node_modules to /app level so Prisma runtime can find its deps
+# when resolving from /app/generated/prisma/runtime/
+COPY --from=builder /app/worker/node_modules /app/node_modules
 
 CMD ["node", "dist/server.js"]
