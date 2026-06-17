@@ -8,10 +8,15 @@ import jobRoutes from "./routes/job.routes.js";
 import applicationRoutes from "./routes/application.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import resumeRoutes from "./routes/resume.routes.js";
+import { setupSwagger } from "./config/swagger.js";
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // disabled for Swagger UI to work
+  }),
+);
 
 app.use(compression());
 
@@ -41,6 +46,7 @@ app.use("/api/v1/resumes", resumeRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1", applicationRoutes);
 
+setupSwagger(app);
 app.use(errorHandler);
 
 export default app;
