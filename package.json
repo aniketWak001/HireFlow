@@ -12,19 +12,18 @@
   },
   "lint-staged": {
     "api/src/**/*.ts": [
-      "eslint --fix",
-      "prettier --write"
+      "api/node_modules/.bin/eslint --fix",
+      "api/node_modules/.bin/prettier --write"
     ],
     "api/tests/**/*.ts": [
-      "eslint --fix",
-      "prettier --write"
+      "api/node_modules/.bin/eslint --fix",
+      "api/node_modules/.bin/prettier --write"
     ],
     "worker/src/**/*.ts": [
-      "eslint --fix",
-      "prettier --write"
+      "worker/node_modules/.bin/eslint --fix",
+      "worker/node_modules/.bin/prettier --write"
     ]
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aniketWak001/HireFlow.git"
@@ -40,6 +39,7 @@
   "devDependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@types/node": "^25.9.3",
     "dotenv": "^17.4.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",

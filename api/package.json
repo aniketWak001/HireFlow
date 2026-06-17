@@ -27,6 +27,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1065.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@sentry/node": "^10.58.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.78.0",
     "compression": "^1.8.1",

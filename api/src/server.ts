@@ -1,4 +1,8 @@
 import "dotenv/config";
+import { initSentry } from "./config/sentry.js";
+
+initSentry();
+
 import app from "./app.js";
 import prisma from "./db/prisma.js";
 import { redis } from "./config/redis.js";

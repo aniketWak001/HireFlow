@@ -1,7 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
+import * as Sentry from "@sentry/node";
 import jwt from "jsonwebtoken";
-const { JsonWebTokenError, TokenExpiredError } = jwt;
 import logger from "../utils/logger.js";
+
+const { JsonWebTokenError, TokenExpiredError } = jwt;
 
 export class AppError extends Error {
   constructor(
@@ -43,7 +45,9 @@ export function errorHandler(
     return;
   }
 
+  Sentry.captureException(err);
   logger.error({ err }, "Unexpected error");
+
   res.status(500).json({
     success: false,
     message: "Internal server error",
