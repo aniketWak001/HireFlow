@@ -22,6 +22,10 @@ app.use(compression());
 
 app.use(express.json());
 
+app.get("/api/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // global rate limit - 100 req per 15 min per IP
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -35,10 +39,6 @@ const globalLimiter = rateLimit({
 });
 
 app.use(globalLimiter);
-
-app.get("/api/health", (_req, res) => {
-  res.status(200).json({ status: "ok" });
-});
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/jobs", jobRoutes);
