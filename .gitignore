@@ -11,7 +11,6 @@ api/dist
 worker/dist
 
 .env
-.env.*
 frontend/.env
 api/.env
 worker/.env
