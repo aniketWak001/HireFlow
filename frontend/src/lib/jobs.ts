@@ -65,7 +65,7 @@ export async function closeJob(id: string): Promise<Job> {
 
 export async function applyToJob(
   jobId: string,
-  data: { coverLetter?: string }
+  data: { coverLetter?: string },
 ): Promise<void> {
   await api.post(`/api/v1/jobs/${jobId}/apply`, data);
 }

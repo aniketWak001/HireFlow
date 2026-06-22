@@ -21,7 +21,7 @@ export async function getCandidateApplications(): Promise<Application[]> {
 
 export async function updateApplicationStatus(
   applicationId: string,
-  status: string
+  status: string,
 ): Promise<void> {
   await api.patch(`/api/v1/applications/${applicationId}/status`, { status });
 }
