@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import compression from "compression";
@@ -11,6 +12,13 @@ import resumeRoutes from "./routes/resume.routes.js";
 import { setupSwagger } from "./config/swagger.js";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://hireflow-frontend.vercel.app"],
+    credentials: true,
+  }),
+);
 
 app.use(
   helmet({
